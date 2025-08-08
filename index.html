@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login - To-Do App</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login - To-Do App</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="login-box">
-    <h2>Login</h2>
-    <input type="text" id="username" placeholder="Enter Name" />
-    <input type="password" id="password" placeholder="Enter Password" />
-    <button onclick="login()">Login</button>
-    <p id="error" style="color: red;"></p>
+  <div class="login-container">
+    <h2>Login to Your To-Do List</h2>
+    <input type="text" id="username" placeholder="Enter your name" autocomplete="off" />
+    <input type="password" id="password" placeholder="Enter your password" autocomplete="off" />
+    <button onclick="login()">Log In</button>
+    <p id="error-msg"></p>
   </div>
 
   <script src="script.js"></script>

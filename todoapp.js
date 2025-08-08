@@ -1,21 +1,21 @@
-const taskList = document.getElementById("task-list");
-const newTaskInput = document.getElementById("new-task");
+document.addEventListener("DOMContentLoaded", () => {
+  const taskList = document.getElementById("task-list");
+  const newTaskInput = document.getElementById("new-task");
 
-function addTask() {
-  const taskText = newTaskInput.value.trim();
-  if (taskText === "") return;
+  window.addTask = function () {
+    const taskText = newTaskInput.value.trim();
+    if (taskText === "") return;
 
-  const li = document.createElement("li");
-  li.textContent = taskText;
+    const li = document.createElement("li");
+    li.textContent = taskText;
 
-  // Add remove button
-  const removeBtn = document.createElement("button");
-  removeBtn.textContent = "X";
-  removeBtn.style.marginLeft = "10px";
-  removeBtn.onclick = () => li.remove();
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "X";
+    removeBtn.onclick = () => li.remove();
 
-  li.appendChild(removeBtn);
-  taskList.appendChild(li);
+    li.appendChild(removeBtn);
+    taskList.appendChild(li);
 
-  newTaskInput.value = "";
-}
+    newTaskInput.value = "";
+  };
+});

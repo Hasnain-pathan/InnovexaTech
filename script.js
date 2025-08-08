@@ -2,7 +2,7 @@ function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  // Your credentials here
+  // Change these to your own secret credentials
   const correctUsername = "admin";
   const correctPassword = "12345";
 
@@ -10,7 +10,9 @@ function login() {
     sessionStorage.setItem("loggedIn", "true");
     window.location.href = "todo.html";
   } else {
-    document.getElementById("error").innerText = "Invalid name or password.";
+    const errorMsg = document.getElementById("error-msg");
+    errorMsg.textContent = "Invalid name or password!";
+    errorMsg.style.color = "#ff6b6b";
   }
 }
 

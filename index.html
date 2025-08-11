@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Signin & ToDo App - Single Page</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0f2027;
+    background: linear-gradient(135deg, #2c5364, #203a43, #0f2027);
+    color: #e0e0e0;
+    margin: 0; padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .container {
+    background: rgba(0,0,0,0.7);
+    padding: 40px;
+    border-radius: 15px;
+    width: 350px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.8);
+  }
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #00bcd4;
+  }
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 12px 10px;
+    margin: 8px 0 20px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #00bcd4, #007a8a);
+    border: none;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: linear-gradient(90deg, #007a8a, #00bcd4);
+  }
+  .error {
+    color: #ff5555;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  #todoApp {
+    display: none;
+    flex-direction: column;
+  }
+  #todoApp header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+  }
+  #todoApp h2 {
+    color: #00bcd4;
+    margin: 0;
+  }
+  #logoutBtn {
+    background: transparent;
+    border: 2px solid #00bcd4;
+    padding: 6px 16px;
+    color: #00bcd4;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  #logoutBtn:hover {
+    background: #00bcd4;
+    color: #0f2027;
+  }
+  #newTask {
+    display: flex;
+    margin-bottom: 20px;
+  }
+  #newTask input {
+    flex-grow: 1;
+    padding: 10px 12px;
+    border-radius: 8px 0 0 8px;
+    border: none;
+    font-size: 1rem;
+  }
+  #newTask button {
+    padding: 10px 16px;
+    border-radius: 0 8px 8px 0;
+  }
+  ul#taskList {
+    list-style: none;
+    padding-left: 0;
+  }
+  ul#taskList li {
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 12px;
+    padding: 12px 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  ul#taskList li button {
+    background: #ff5555;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 15px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+  }
+  ul#taskList li button:hover {
+    background: #ff2222;
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="signinDiv">
+  <h2>Sign In</h2>
+  <div class="error" id="errorMsg"></div>
+  <input type="text" id="username" placeholder="Username" autocomplete="off" />
+  <input type="password" id="password" placeholder="Password" autocomplete="off" />
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="container" id="todoApp">
+  <header>
+    <h2>My To-Do List</h2>
+    <button id="logoutBtn" onclick="logout()">Logout</button>
+  </header>
+  <div id="newTask">
+    <input type="text" id="taskInput" placeholder="Add a new task..." />
+    <button onclick="addTask()">Add</button>
+  </div>
+  <ul id="taskList"></ul>
+</div>
+
+<script>
+  const signinDiv = document.getElementById('signinDiv');
+  const todoApp = document.getElementById('todoApp');
+  const errorMsg = document.getElementById('errorMsg');
+  const usernameInput = document.getElementById('username');
+  const passwordInput = document.getElementById('password');
+  const taskInput = document.getElementById('taskInput');
+  const taskList = document.getElementById('taskList');
+
+  // Hardcoded credentials
+  const validUser = 'admin';
+  const validPass = '1234';
+
+  function login() {
+    errorMsg.textContent = '';
+    if (usernameInput.value === validUser && passwordInput.value === validPass) {
+      signinDiv.style.display = 'none';
+      todoApp.style.display = 'flex';
+      usernameInput.value = '';
+      passwordInput.value = '';
+      loadTasks();
+    } else {
+      errorMsg.textContent = 'Invalid username or password!';
+    }
+  }
+
+  function logout() {
+    todoApp.style.display = 'none';
+    signinDiv.style.display = 'block';
+    clearTasks();
+  }
+
+  // Save tasks in localStorage
+  function saveTasks(tasks) {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+  // Load tasks from localStorage
+  function loadTasks() {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    taskList.innerHTML = '';
+    tasks.forEach((task, index) => {
+      addTaskToDOM(task, index);
+    });
+  }
+
+  function clearTasks() {
+    taskList.innerHTML = '';
+  }
+
+  function addTask() {
+    const taskText = taskInput.value.trim();
+    if (taskText === '') return;
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks.push(taskText);
+    saveTasks(tasks);
+    addTaskToDOM(taskText, tasks.length - 1);
+    taskInput.value = '';
+  }
+
+  function addTaskToDOM(taskText, index) {
+    const li = document.createElement('li');
+    li.textContent = taskText;
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = 'Delete';
+    delBtn.onclick = function () {
+      deleteTask(index);
+    };
+
+    li.appendChild(delBtn);
+    taskList.appendChild(li);
+  }
+
+  function deleteTask(index) {
+    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    tasks.splice(index, 1);
+    saveTasks(tasks);
+    loadTasks();
+  }
+</script>
+
+</body>
+</html>
